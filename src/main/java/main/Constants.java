@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 public class Constants {
     public static final int CHUNK_SIZE = 32;
     public static final int CHUNK_SIZE_P = CHUNK_SIZE + 2; // Padded size for binary greedy alg
+    public static final int CHUNK_HEIGHT = 256;
+    public static final int CHUNK_HEIGHT_P = CHUNK_HEIGHT + 2; // Padded size for binary greedy alg
     public static final int CHUNK_SIZE_P2 = CHUNK_SIZE_P * CHUNK_SIZE_P;
     public static final int CHUNK_SIZE_P3 = CHUNK_SIZE_P2 * CHUNK_SIZE_P;
 

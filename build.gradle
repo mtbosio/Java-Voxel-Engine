@@ -10,16 +10,11 @@ project.ext.lwjglNatives = "natives-macos"
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://repo.spongepowered.org/repository/maven-public/"
-    }
+
 }
 
 dependencies {
     implementation 'org.joml:joml:1.10.5'
-
-    implementation "org.spongepowered:noise:2.0.0-SNAPSHOT"
-
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 

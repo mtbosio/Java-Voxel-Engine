@@ -1,6 +1,8 @@
 package main;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -51,14 +53,21 @@ public class Shader {
         }
     }
 
-    public void setUniform(String name, Matrix4f matrix) {
+    public void setUniformMatrix(String name, Matrix4f matrix) {
         int location = GL20.glGetUniformLocation(programId, name);
         // Convert Matrix4f to float array and upload to shader
         float[] matrixArray = new float[16];
         matrix.get(matrixArray);
         GL20.glUniformMatrix4fv(location, false, matrixArray);
     }
-
+    public void setUniformVector2i(String name, int x, int y) {
+        int location = GL20.glGetUniformLocation(programId, name);
+        GL20.glUniform2i(location, x, y);
+    }
+    public void setUniformVector3f(String name, float x,float y, float z) {
+        int location = GL20.glGetUniformLocation(programId, name);
+        GL20.glUniform3f(location, x, y, z);
+    }
     public void use() {
         GL20.glUseProgram(programId);
     }
@@ -66,4 +75,6 @@ public class Shader {
     public void cleanup() {
         GL20.glDeleteProgram(programId);
     }
+
+
 }

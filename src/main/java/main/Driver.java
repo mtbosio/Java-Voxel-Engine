@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL;
 import player.Camera;
 import player.MouseHandler;
 import player.PlayerInput;
+import worldGen.chunk.ChunkManager;
 
 
 public class Driver {
@@ -22,6 +23,7 @@ public class Driver {
     public static TerrainGenerator terrainGenerator;
     public static GreedyMesher greedyMesher;
     private PlayerInput playerInput;
+    private ChunkManager chunkManager;
 
     public void run() {
         init();
@@ -51,7 +53,10 @@ public class Driver {
         GL.createCapabilities();
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.53f, 0.81f, 0.98f, 1.0f); // Light sky blue color
-
+        // Enable face culling
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW); // Use GL_CW for clockwise
 
         // create the camera and mouse handler
         camera = new Camera(new Vector3f(0f,0f,5f), new Vector3f(0f,0f,-1f), new Vector3f(0,1,0));
@@ -65,16 +70,19 @@ public class Driver {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // create a static terrainGenerator that can be accessed from any chunk
-        terrainGenerator = new TerrainGenerator();
+        terrainGenerator = new TerrainGenerator(98834, 8, 0.5, 0.01);
 
         // create a static greedyMesher that can be accessed from the World to create meshes for chunks
         greedyMesher = new GreedyMesher(renderer);
 
+        // create the chunk manager
+        chunkManager = new ChunkManager();
+
         // Create the renderer
-        renderer = new Renderer(camera);
+        renderer = new Renderer(camera, chunkManager);
         renderer.init();
 
-        world = new World(renderer);
+        world = new World(renderer, chunkManager);
     }
 
     private void loop() {
@@ -90,7 +98,8 @@ public class Driver {
     }
 
     private void cleanup() {
-        renderer.cleanup();
+        chunkManager.cleanUp();
+        renderer.cleanUp();
         glfwDestroyWindow(window);
         glfwTerminate();
     }

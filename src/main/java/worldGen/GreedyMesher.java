@@ -3,8 +3,11 @@ package worldGen;
 import main.Constants;
 import main.Renderer;
 import org.joml.Vector3i;
-import org.spongepowered.noise.module.source.Const;
-
+import worldGen.chunk.Block;
+import worldGen.chunk.ChunkData;
+import worldGen.chunk.ChunkMesh;
+import worldGen.chunk.ChunkRefs;
+import worldGen.chunk.Block.BlockType;
 import java.util.*;
 
 public class GreedyMesher {
@@ -15,8 +18,6 @@ public class GreedyMesher {
     }
 
     public ChunkMesh buildChunkMesh(ChunkRefs chunkRefs) {
-        ChunkMesh mesh = new ChunkMesh();
-
         long[][][] axisCols = new long[3][Constants.CHUNK_SIZE_P][Constants.CHUNK_SIZE_P];
         long[][][] colFaceMasks = new long[6][Constants.CHUNK_SIZE_P][Constants.CHUNK_SIZE_P];
 
@@ -28,12 +29,13 @@ public class GreedyMesher {
 
         // middle chunk in a 3x3
         ChunkData chunk = chunkRefs.getChunks().get(5);
+        ChunkMesh mesh = new ChunkMesh(chunk);
 
         // creating axisCols for inner chunks
         for (int z = 0; z < Constants.CHUNK_SIZE; z++) {
             for (int y = 0; y < Constants.CHUNK_SIZE; y++) {
                 for (int x = 0; x < Constants.CHUNK_SIZE; x++) {
-                    int i = (chunk.getBlocks().length == 1) ? 0 : (z * Constants.CHUNK_SIZE + y) * Constants.CHUNK_SIZE + x;
+                    int i = (chunk.getBlocks().length == 1) ? 0 : (y * Constants.CHUNK_SIZE * Constants.CHUNK_SIZE) + (z * Constants.CHUNK_SIZE) + x;
                     addVoxelToAxisCols(chunk.getBlocks()[i], x + 1, y + 1 , z + 1, axisCols);
                 }
             }
@@ -156,17 +158,17 @@ public class GreedyMesher {
                     List<GreedyQuad> quadsFromAxis = greedyMeshBinaryPlane(plane, Constants.CHUNK_SIZE);
 
                     for (GreedyQuad q : quadsFromAxis) {
-                        q.appendVertices(mesh.getVertices(), direction, axisPos, blockType);
+                        q.appendVertices(vertices, direction, axisPos, blockType);
                     }
                 }
             }
         }
 
-        mesh.getVertices().addAll(vertices);
-        if (mesh.getVertices().isEmpty()) {
+        mesh.setVertices(vertices);
+        if (mesh.getVerticesAsList().isEmpty()) {
             return null;
         } else {
-            mesh.setIndices(generateIndices(mesh.getVertices().size()));
+            mesh.setIndices(generateIndices(mesh.getVerticesAsList().size()));
             return mesh;
         }
     }

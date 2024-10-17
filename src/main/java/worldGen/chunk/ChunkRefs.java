@@ -1,9 +1,10 @@
-package worldGen;
+package worldGen.chunk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import main.Constants;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
 
@@ -55,8 +56,8 @@ public class ChunkRefs {
     // Get a block at the specified position relative to the middle chunk
     public Block getBlock(Vector3i pos) {
         // Calculate relative position within the 3x3 area
-        int relativeX = (pos.x / 32) + 1; // This gives us -1, 0, or 1
-        int relativeZ = (pos.z / 32) + 1; // This gives us -1, 0, or 1
+        int relativeX = pos.x / Constants.CHUNK_SIZE + 1; // This gives us -1, 0, or 1
+        int relativeZ = pos.z / Constants.CHUNK_SIZE + 1; // This gives us -1, 0, or 1
 
         // Calculate chunk index based on relative x and z positions
         int chunkIndex = relativeZ * 3 + relativeX;
@@ -69,9 +70,14 @@ public class ChunkRefs {
         ChunkData chunkData = chunks.get(chunkIndex);
 
         // Get the local block position within the chunk
-        int localX = (pos.x % 32 + 32) % 32; // Ensure positive local position
-        int localY = (pos.y % 32 + 32) % 32; // Ensure positive local position
-        int localZ = (pos.z % 32 + 32) % 32; // Ensure positive local position
+        int localX = pos.x % Constants.CHUNK_SIZE; // Local x in chunk
+        int localY = pos.y % Constants.CHUNK_SIZE; // Local y in chunk
+        int localZ = pos.z % Constants.CHUNK_SIZE; // Local z in chunk
+
+        // Ensure local positions are non-negative
+        if (localX < 0) localX += Constants.CHUNK_SIZE;
+        if (localY < 0) localY += Constants.CHUNK_SIZE;
+        if (localZ < 0) localZ += Constants.CHUNK_SIZE;
 
 
         return chunkData.getBlockAtPosition(localX, localY, localZ);

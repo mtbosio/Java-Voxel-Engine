@@ -75,12 +75,12 @@ public class GreedyQuad {
 
     // Placeholder for the makeVertexU32 method
     public static int makeVertexU32(Vector3i pos, int ao, int normal, int blockType) {
-        return (pos.x() & 0x3F)             // pos.x as u32 (6 bits)
-                | ((pos.y() & 0x3F) << 6)      // pos.y as u32 (6 bits, shifted left by 6)
-                | ((pos.z() & 0x3F) << 12)     // pos.z as u32 (6 bits, shifted left by 12)
-                | ((ao & 0x7) << 18)              // ao (3 bits, shifted left by 18)
-                | ((normal & 0xF) << 21)          // normal (4 bits, shifted left by 21)
-                | ((blockType & 0xF) << 25);      // blockType (4 bits, shifted left by 25)
+        return (pos.x() & 0x3F)                // pos.x as u32 (6 bits)
+                | ((pos.y() & 0xFF) << 6)      // pos.y as u32 (8 bits, shifted left by 6)
+                | ((pos.z() & 0x3F) << 14)     // pos.z as u32 (6 bits, shifted left by 14)
+                | ((ao & 0x7) << 20)           // ao (3 bits, shifted left by 20)
+                | ((normal & 0xF) << 23)       // normal (4 bits, shifted left by 23)
+                | ((blockType & 0xF) << 27);   // blockType (4 bits, shifted left by 27)
     }
 
 
