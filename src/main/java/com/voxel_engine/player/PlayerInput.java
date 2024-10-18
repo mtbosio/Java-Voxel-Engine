@@ -1,7 +1,6 @@
-package player;
+package com.voxel_engine.player;
 
 import org.lwjgl.glfw.GLFW;
-import org.joml.Vector3f;
 
 public class PlayerInput {
     private Camera camera;

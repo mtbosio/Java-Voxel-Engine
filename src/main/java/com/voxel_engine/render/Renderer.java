@@ -1,8 +1,8 @@
-package main;
+package com.voxel_engine.render;
 
 import org.joml.Matrix4f;
-import player.Camera;
-import worldGen.chunk.ChunkManager;
+import com.voxel_engine.player.Camera;
+import com.voxel_engine.worldGen.chunk.ChunkManager;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -20,7 +20,7 @@ public class Renderer {
 
     public void init() {
         // Create and compile the shader program
-        shader = new Shader("/Users/mb08eight/Documents/JavaVoxelEngine/src/main/shaders/vertex_shader.glsl", "/Users/mb08eight/Documents/JavaVoxelEngine/src/main/shaders/fragment_shader.glsl");
+        shader = new Shader("main/java/com/voxel_engine/shaders/vertex_shader.glsl", "main/java/com/voxel_engine/shaders/fragment_shader.glsl");
 
         // Set up projection matrix
         projectionMatrix = new Matrix4f().perspective((float) Math.toRadians(45.0), (float) 800f / (float) 600f, 0.1f, 100.0f);

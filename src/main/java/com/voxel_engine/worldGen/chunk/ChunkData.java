@@ -1,8 +1,7 @@
-package worldGen.chunk;
-import main.Driver;
-import main.Constants;
-import worldGen.chunk.Block.BlockType;
-
+package com.voxel_engine.worldGen.chunk;
+import com.voxel_engine.Driver;
+import com.voxel_engine.utils.Constants;
+import com.voxel_engine.worldGen.chunk.Block.BlockType;
 import java.util.Random;
 
 public class ChunkData {

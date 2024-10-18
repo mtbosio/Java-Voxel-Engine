@@ -1,4 +1,4 @@
-package main;
+package com.voxel_engine.utils;
 
 import org.joml.Vector3f;
 

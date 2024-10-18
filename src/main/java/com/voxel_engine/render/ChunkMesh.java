@@ -1,12 +1,11 @@
-package worldGen.chunk;
+package com.voxel_engine.render;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import main.Shader;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
+import com.voxel_engine.render.Shader;
+import com.voxel_engine.worldGen.chunk.ChunkData;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;

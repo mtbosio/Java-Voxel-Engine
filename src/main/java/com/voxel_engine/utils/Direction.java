@@ -1,4 +1,4 @@
-package worldGen;
+package com.voxel_engine.utils;
 
 import org.joml.Vector3i;
 

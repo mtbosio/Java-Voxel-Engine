@@ -1,4 +1,4 @@
-package player;
+package com.voxel_engine.player;
 
 import org.lwjgl.glfw.GLFWCursorPosCallbackI;
 

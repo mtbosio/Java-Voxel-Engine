@@ -1,10 +1,10 @@
-package worldGen.chunk;
+package com.voxel_engine.worldGen.chunk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import main.Constants;
+import com.voxel_engine.utils.Constants;
 import org.joml.Vector2i;
 import org.joml.Vector3i;
 

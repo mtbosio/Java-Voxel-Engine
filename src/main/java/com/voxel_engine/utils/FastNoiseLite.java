@@ -1,4 +1,4 @@
-package main;
+package com.voxel_engine.utils;
 // MIT License
 //
 // Copyright(c) 2023 Jordan Peck (jordan.me2@gmail.com)

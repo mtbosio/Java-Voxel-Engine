@@ -1,5 +1,6 @@
-package worldGen;
+package com.voxel_engine.worldGen.greedyMesher;
 
+import com.voxel_engine.utils.Direction;
 import org.joml.Vector3i;
 
 import java.util.*;

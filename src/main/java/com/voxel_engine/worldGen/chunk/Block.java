@@ -1,4 +1,4 @@
-package worldGen.chunk;
+package com.voxel_engine.worldGen.chunk;
 
 public class Block {
     public enum BlockType {

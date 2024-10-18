@@ -1,18 +1,26 @@
-package main;
+package com.voxel_engine.utils;
 
 public class TerrainGenerator {
+    private static TerrainGenerator instance;
     private final FastNoiseLite noise;
     private final int octaves;
     private final double persistence; // Controls how much each octave contributes
     private final double scale; // Scaling factor for the noise
 
-    public TerrainGenerator(int seed, int octaves, double persistence, double scale) {
+    private TerrainGenerator(int seed, int octaves, double persistence, double scale) {
         this.noise = new FastNoiseLite();
         noise.SetSeed(seed);
         noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2); // You can choose the noise type
         this.octaves = octaves;
         this.persistence = persistence;
         this.scale = scale;
+    }
+
+    public static TerrainGenerator getInstance() {
+        if (instance == null) {
+            instance = new TerrainGenerator(98834, 8, 0.5, 0.01);
+        }
+        return instance;
     }
 
     // A method to generate height at (x, z) coordinates

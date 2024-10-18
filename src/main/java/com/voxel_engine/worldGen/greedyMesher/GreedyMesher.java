@@ -1,13 +1,14 @@
-package worldGen;
+package com.voxel_engine.worldGen.greedyMesher;
 
-import main.Constants;
-import main.Renderer;
+import com.voxel_engine.utils.Constants;
+import com.voxel_engine.render.Renderer;
+import com.voxel_engine.utils.Direction;
 import org.joml.Vector3i;
-import worldGen.chunk.Block;
-import worldGen.chunk.ChunkData;
-import worldGen.chunk.ChunkMesh;
-import worldGen.chunk.ChunkRefs;
-import worldGen.chunk.Block.BlockType;
+import com.voxel_engine.worldGen.chunk.Block;
+import com.voxel_engine.worldGen.chunk.ChunkData;
+import com.voxel_engine.render.ChunkMesh;
+import com.voxel_engine.worldGen.chunk.ChunkRefs;
+import com.voxel_engine.worldGen.chunk.Block.BlockType;
 import java.util.*;
 
 public class GreedyMesher {

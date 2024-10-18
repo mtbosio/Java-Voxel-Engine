@@ -1,17 +1,19 @@
-package main;
+package com.voxel_engine;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-import worldGen.GreedyMesher;
-import worldGen.World;
+import com.voxel_engine.render.Renderer;
+import com.voxel_engine.utils.TerrainGenerator;
+import com.voxel_engine.worldGen.greedyMesher.GreedyMesher;
+import com.voxel_engine.worldGen.World;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
-import player.Camera;
-import player.MouseHandler;
-import player.PlayerInput;
-import worldGen.chunk.ChunkManager;
+import com.voxel_engine.player.Camera;
+import com.voxel_engine.player.MouseHandler;
+import com.voxel_engine.player.PlayerInput;
+import com.voxel_engine.worldGen.chunk.ChunkManager;
 
 
 public class Driver {
@@ -70,7 +72,7 @@ public class Driver {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // create a static terrainGenerator that can be accessed from any chunk
-        terrainGenerator = new TerrainGenerator(98834, 8, 0.5, 0.01);
+        terrainGenerator = TerrainGenerator.getInstance();
 
         // create a static greedyMesher that can be accessed from the World to create meshes for chunks
         greedyMesher = new GreedyMesher(renderer);

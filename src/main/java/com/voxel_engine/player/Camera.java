@@ -1,4 +1,4 @@
-package player;
+package com.voxel_engine.player;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

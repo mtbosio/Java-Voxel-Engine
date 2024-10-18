@@ -1,8 +1,6 @@
-package main;
+package com.voxel_engine.render;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -46,7 +44,7 @@ public class Shader {
 
     private String readFile(String path) {
         try {
-            return Files.readString(Path.of(path));
+            return Files.readString(Path.of("src", path));
         } catch (Exception e) {
             e.printStackTrace();
             return null;

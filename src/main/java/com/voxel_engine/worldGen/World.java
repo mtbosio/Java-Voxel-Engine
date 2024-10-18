@@ -1,13 +1,12 @@
-package worldGen;
-
-import main.Constants;
-import main.Driver;
-import main.Renderer;
+package com.voxel_engine.worldGen;
+import com.voxel_engine.Driver;
+import com.voxel_engine.utils.Constants;
+import com.voxel_engine.render.Renderer;
 import org.joml.Vector2i;
-import worldGen.chunk.ChunkData;
-import worldGen.chunk.ChunkManager;
-import worldGen.chunk.ChunkMesh;
-import worldGen.chunk.ChunkRefs;
+import com.voxel_engine.worldGen.chunk.ChunkData;
+import com.voxel_engine.worldGen.chunk.ChunkManager;
+import com.voxel_engine.render.ChunkMesh;
+import com.voxel_engine.worldGen.chunk.ChunkRefs;
 
 import java.util.HashMap;
 

@@ -1,12 +1,12 @@
-package worldGen.chunk;
+package com.voxel_engine.worldGen.chunk;
 
-import main.Shader;
-import org.joml.Matrix4f;
+import com.voxel_engine.render.ChunkMesh;
+import com.voxel_engine.render.Shader;
 import org.joml.Vector2i;
 
 import java.util.HashMap;
 import java.util.Map;
-import main.Renderer;
+
 public class ChunkManager {
     private Map<Vector2i, ChunkMesh> chunkList; // List to hold all chunks
 
