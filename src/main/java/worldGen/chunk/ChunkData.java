@@ -25,10 +25,10 @@ public class ChunkData {
         for (int x = 0; x < Constants.CHUNK_SIZE; x++) {
             for (int z = 0; z < Constants.CHUNK_SIZE; z++) {
                 // Loop through the y levels in the chunk
-                double height = Driver.terrainGenerator.getHeight(worldX + x, worldZ + z, Constants.CHUNK_SIZE);
+                double height = Driver.terrainGenerator.getHeight(worldX + x, worldZ + z, Constants.CHUNK_HEIGHT);
                 int roundedHeight = (int) Math.round(height);
 
-                for(int y = 0; y < Constants.CHUNK_SIZE; y++){
+                for(int y = 0; y < Constants.CHUNK_HEIGHT; y++){
                     if(y == roundedHeight){
                         blocks[getIndex(x,y,z)] = new Block(BlockType.GRASS);
                     } else if(y < roundedHeight) {

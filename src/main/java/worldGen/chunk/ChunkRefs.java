@@ -71,12 +71,12 @@ public class ChunkRefs {
 
         // Get the local block position within the chunk
         int localX = pos.x % Constants.CHUNK_SIZE; // Local x in chunk
-        int localY = pos.y % Constants.CHUNK_SIZE; // Local y in chunk
+        int localY = pos.y % Constants.CHUNK_HEIGHT; // Local y in chunk
         int localZ = pos.z % Constants.CHUNK_SIZE; // Local z in chunk
 
         // Ensure local positions are non-negative
         if (localX < 0) localX += Constants.CHUNK_SIZE;
-        if (localY < 0) localY += Constants.CHUNK_SIZE;
+        if (localY < 0) localY += Constants.CHUNK_HEIGHT;
         if (localZ < 0) localZ += Constants.CHUNK_SIZE;
 
 

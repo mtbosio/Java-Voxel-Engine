@@ -52,7 +52,7 @@ public class TerrainGenerator {
         }
 
         // Ensure the noiseHeight stays within the maxY limit
-        double height = Math.max(0, Math.min(noiseHeight * 32, maxY));
+        double height = Math.max(0, Math.min(noiseHeight * Constants.CHUNK_HEIGHT, maxY));
         return height;
     }
 }
