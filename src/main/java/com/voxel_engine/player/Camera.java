@@ -8,9 +8,9 @@ public class Camera {
     private Vector3f direction;
     private Vector3f up;
 
-    private float yaw = -90.0f;  // Initialize facing forward
+    private float yaw = 0f;  // Initialize facing forward
     private float pitch = 0.0f;
-    private float speed = 0.1f;  // Adjust the speed to your preference
+    private float speed = 0.5f;  // Adjust the speed to your preference
 
     public Camera(Vector3f position, Vector3f direction, Vector3f up) {
         this.position = position;

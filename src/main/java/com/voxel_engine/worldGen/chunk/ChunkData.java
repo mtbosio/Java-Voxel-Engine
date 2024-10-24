@@ -1,7 +1,7 @@
 package com.voxel_engine.worldGen.chunk;
 import com.voxel_engine.Driver;
 import com.voxel_engine.utils.Constants;
-import com.voxel_engine.worldGen.chunk.Block.BlockType;
+import com.voxel_engine.worldGen.chunk.Block;
 import java.util.Random;
 
 public class ChunkData {
@@ -16,7 +16,7 @@ public class ChunkData {
         this.worldY = worldY;
         this.worldZ = worldZ;
 
-        blocks = new Block[Constants.CHUNK_SIZE * Constants.CHUNK_SIZE * Constants.CHUNK_HEIGHT];  // Initialize the array with the capacity of the chunk
+        blocks = new Block[Constants.CHUNK_SIZE * Constants.CHUNK_SIZE * Constants.CHUNK_SIZE];  // Initialize the array with the capacity of the chunk
         createChunk();
     }
 
@@ -24,37 +24,19 @@ public class ChunkData {
         for (int x = 0; x < Constants.CHUNK_SIZE; x++) {
             for (int z = 0; z < Constants.CHUNK_SIZE; z++) {
                 // Loop through the y levels in the chunk
-                double height = Driver.terrainGenerator.getHeight(worldX + x, worldZ + z, Constants.CHUNK_HEIGHT);
+                double height = Driver.terrainGenerator.getHeight(worldX + x, worldZ + z);
                 int roundedHeight = (int) Math.round(height);
 
-                for(int y = 0; y < Constants.CHUNK_HEIGHT; y++){
-                    if(y == roundedHeight){
-                        blocks[getIndex(x,y,z)] = new Block(BlockType.GRASS);
-                    } else if(y < roundedHeight) {
-                        blocks[getIndex(x,y,z)] = new Block(BlockType.DIRT);
+                for(int y = 0; y < Constants.CHUNK_SIZE; y++){
+                    if(worldY + y == roundedHeight){
+                        blocks[getIndex(x,y,z)] = Block.GRASS;
+                    } else if(worldY + y < roundedHeight) {
+                        blocks[getIndex(x,y,z)] = Block.DIRT;
                     } else {
-                        blocks[getIndex(x,y,z)] = new Block(BlockType.AIR);
+                        blocks[getIndex(x,y,z)] = Block.AIR;
                     }
                 }
 
-            }
-        }
-    }
-    public void carveCave(int startX, int startY, int startZ, int radius) {
-        // Example: Use a random walk to create a cave
-        Random rand = new Random();
-        for (int i = 0; i < 1; i++) { // Adjust the number of caves
-            int x = startX + (rand.nextInt(radius * 2) - radius);
-            int y = startY + (rand.nextInt(radius * 2) - radius);
-            int z = startZ + (rand.nextInt(radius * 2) - radius);
-            for (int dx = -radius; dx <= radius; dx++) {
-                for (int dy = -radius; dy <= radius; dy++) {
-                    for (int dz = -radius; dz <= radius; dz++) {
-                        if (dx * dx + dy * dy + dz * dz <= radius * radius) {
-                            blocks[getIndex(x + dx, y + dy, z + dz)] = new Block(BlockType.AIR);  // Replace with air block
-                        }
-                    }
-                }
             }
         }
     }
@@ -73,9 +55,10 @@ public class ChunkData {
     public int getWorldX() {
         return worldX;
     }
-
+    public int getWorldY() {
+        return worldY;
+    }
     public int getWorldZ() {
         return worldZ;
     }
-
 }

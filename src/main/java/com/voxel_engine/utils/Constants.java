@@ -3,10 +3,9 @@ package com.voxel_engine.utils;
 import org.joml.Vector3f;
 
 public class Constants {
-    public static final int CHUNK_SIZE = 32;
+    public static final int CHUNK_SIZE = 16;
     public static final int CHUNK_SIZE_P = CHUNK_SIZE + 2; // Padded size for binary greedy alg
-    public static final int CHUNK_HEIGHT = 255;
-    public static final int CHUNK_HEIGHT_P = CHUNK_HEIGHT + 2; // Padded size for binary greedy alg
+    public static final int WORLD_HEIGHT = 255;
     public static final int CHUNK_SIZE_P2 = CHUNK_SIZE_P * CHUNK_SIZE_P;
     public static final int CHUNK_SIZE_P3 = CHUNK_SIZE_P2 * CHUNK_SIZE_P;
 

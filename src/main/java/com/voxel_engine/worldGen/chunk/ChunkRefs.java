@@ -46,7 +46,7 @@ public class ChunkRefs {
 
         for (ChunkData chunk : chunks.subList(1, chunks.size())) {
             Block block = chunk.getBlockAtPosition(0, 0, 0); // Compare with the first block
-            if (block == null || block.getBlockType() != firstBlock.getBlockType()) {
+            if (block == null || block.getId() != firstBlock.getId()) {
                 return false;
             }
         }
@@ -71,12 +71,12 @@ public class ChunkRefs {
 
         // Get the local block position within the chunk
         int localX = pos.x % Constants.CHUNK_SIZE; // Local x in chunk
-        int localY = pos.y % Constants.CHUNK_HEIGHT; // Local y in chunk
+        int localY = pos.y % Constants.CHUNK_SIZE; // Local y in chunk
         int localZ = pos.z % Constants.CHUNK_SIZE; // Local z in chunk
 
         // Ensure local positions are non-negative
         if (localX < 0) localX += Constants.CHUNK_SIZE;
-        if (localY < 0) localY += Constants.CHUNK_HEIGHT;
+        if (localY < 0) localY += Constants.CHUNK_SIZE;
         if (localZ < 0) localZ += Constants.CHUNK_SIZE;
 
 

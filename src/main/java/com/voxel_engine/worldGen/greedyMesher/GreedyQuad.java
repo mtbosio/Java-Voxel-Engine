@@ -5,7 +5,7 @@ import org.joml.Vector3i;
 
 import java.util.*;
 public class GreedyQuad {
-    private int x, y, w, h;
+    /*private int x, y, w, h;
 
     // Constructor for initialization
     public GreedyQuad(int x, int y, int w, int h) {
@@ -64,25 +64,18 @@ public class GreedyQuad {
             }
         }
 
-        /*if ((v1 > 0) ^ (v3 > 0)) {
+        if ((v1 > 0) ^ (v3 > 0)) {
             // Rotate the array to swap the triangle intersection angle
             Integer first = newVertices.pollFirst();
             newVertices.addLast(first);
-        }*/
+        }
 
         // Add the new vertices to the input list
         vertices.addAll(newVertices);
     }
 
     // Placeholder for the makeVertexU32 method
-    public static int makeVertexU32(Vector3i pos, int ao, int normal, int blockType) {
-        return (pos.x() & 0x3F)                // pos.x as u32 (6 bits)
-                | ((pos.y() & 0xFF) << 6)      // pos.y as u32 (8 bits, shifted left by 6)
-                | ((pos.z() & 0x3F) << 14)     // pos.z as u32 (6 bits, shifted left by 14)
-                | ((ao & 0x7) << 20)           // ao (3 bits, shifted left by 20)
-                | ((normal & 0xF) << 23)       // normal (4 bits, shifted left by 23)
-                | ((blockType & 0xF) << 27);   // blockType (4 bits, shifted left by 27)
-    }
 
 
+    */
 }
