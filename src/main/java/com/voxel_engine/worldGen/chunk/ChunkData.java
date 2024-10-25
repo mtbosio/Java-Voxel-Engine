@@ -1,8 +1,6 @@
 package com.voxel_engine.worldGen.chunk;
-import com.voxel_engine.Driver;
+import com.voxel_engine.Engine;
 import com.voxel_engine.utils.Constants;
-import com.voxel_engine.worldGen.chunk.Block;
-import java.util.Random;
 
 public class ChunkData {
 
@@ -24,7 +22,7 @@ public class ChunkData {
         for (int x = 0; x < Constants.CHUNK_SIZE; x++) {
             for (int z = 0; z < Constants.CHUNK_SIZE; z++) {
                 // Loop through the y levels in the chunk
-                double height = Driver.terrainGenerator.getHeight(worldX + x, worldZ + z);
+                double height = Engine.terrainGenerator.getHeight(worldX + x, worldZ + z);
                 int roundedHeight = (int) Math.round(height);
 
                 for(int y = 0; y < Constants.CHUNK_SIZE; y++){

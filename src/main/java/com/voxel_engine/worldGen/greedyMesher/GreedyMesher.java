@@ -1,18 +1,5 @@
 package com.voxel_engine.worldGen.greedyMesher;
 
-import com.voxel_engine.render.ChunkMesh;
-import com.voxel_engine.utils.Constants;
-import com.voxel_engine.utils.Direction;
-import com.voxel_engine.worldGen.chunk.Block;
-import com.voxel_engine.worldGen.chunk.ChunkData;
-import com.voxel_engine.worldGen.chunk.ChunkRefs;
-import com.voxel_engine.worldGen.greedyMesher.GreedyQuad;
-
-import org.joml.Vector3i;
-
-import javax.swing.*;
-import java.util.*;
-
 
 public class GreedyMesher {
     /*

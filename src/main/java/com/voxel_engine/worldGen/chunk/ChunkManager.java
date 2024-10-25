@@ -1,14 +1,12 @@
 package com.voxel_engine.worldGen.chunk;
 
-import com.voxel_engine.Driver;
 import com.voxel_engine.render.ChunkMesh;
-import com.voxel_engine.render.Shader;
+import com.voxel_engine.render.Renderer;
 import com.voxel_engine.utils.Constants;
+import com.voxel_engine.worldGen.culledMesher.CulledMesher;
 import org.joml.Vector3i;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,62 +16,65 @@ import java.util.Map;
  *
  */
 public class ChunkManager {
-    private static ChunkManager instance;
+    private int WOLRD_SIZE = 3;
     private Map<Vector3i, ChunkMesh> currentlyRenderedChunks; // all chunks being rendered
     private Map<Vector3i, ChunkData> chunkDataList; // all chunks that have been initialized
-    private ChunkManager() {
+    private CulledMesher culledMesher;
+    private Renderer renderer;
+    public ChunkManager(CulledMesher culledMesher, Renderer renderer) {
         this.currentlyRenderedChunks = new HashMap<>();
         this.chunkDataList = new HashMap<>();
+        this.culledMesher = culledMesher;
+        this.renderer = renderer;
+        initializeWorldChunkData();
+        initializeWorldChunkMesh();
     }
 
-    public static ChunkManager getInstance() {
-        if (instance == null) {
-            instance = new ChunkManager();
+    private void initializeWorldChunkData(){
+        for(int x = -WOLRD_SIZE; x<WOLRD_SIZE; x++){
+            for(int z = -WOLRD_SIZE; z<WOLRD_SIZE; z++){
+                for(int y = -WOLRD_SIZE; y<WOLRD_SIZE; y++){
+                    addChunkToChunkList(new Vector3i(x,y,z), new ChunkData(x * Constants.CHUNK_SIZE,y * Constants.CHUNK_SIZE,z * Constants.CHUNK_SIZE));
+                }
+            }
         }
-        return instance;
+    }
+    private void initializeWorldChunkMesh(){
+        for(int x = -WOLRD_SIZE; x<WOLRD_SIZE; x++){
+            for(int z = -WOLRD_SIZE; z<WOLRD_SIZE; z++){
+                for(int y = -WOLRD_SIZE; y<WOLRD_SIZE; y++){
+                    ChunkData chunkData = chunkDataList.get(new Vector3i(x * Constants.CHUNK_SIZE,y * Constants.CHUNK_SIZE,z * Constants.CHUNK_SIZE));
+                    Map<Vector3i, ChunkData> neighbors = getNeighbors(chunkData);
+                    ChunkMesh chunkMesh = culledMesher.buildChunkMesh(chunkData, neighbors);
+                    addChunkToBeRendered(new Vector3i(x,y,z), chunkMesh);
+                }
+            }
+        }
     }
 
-    public void addChunkToBeRendered(Vector3i chunkPos, ChunkMesh chunkMesh) {
-        currentlyRenderedChunks.put(chunkPos, chunkMesh);
+    private Map<Vector3i, ChunkData> getNeighbors(ChunkData chunkData){
+        Map<Vector3i, ChunkData> neighbors = new HashMap<>();
+        Vector3i chunkPos = new Vector3i(chunkData.getWorldX(), chunkData.getWorldY(), chunkData.getWorldZ());
+        // + - x
+        neighbors.put(chunkPos.add(chunkPos.x + Constants.CHUNK_SIZE,0,0), chunkDataList.get(chunkPos.add(Constants.CHUNK_SIZE,0,0)));
+        neighbors.put(chunkPos.add(chunkPos.x - Constants.CHUNK_SIZE,0,0), chunkDataList.get(chunkPos.sub(Constants.CHUNK_SIZE,0,0)));
+
+        // + - y
+        neighbors.put(chunkPos.add(0,chunkPos.y + Constants.CHUNK_SIZE,0), chunkDataList.get(chunkPos.add(0,Constants.CHUNK_SIZE,0)));
+        neighbors.put(chunkPos.add(0,chunkPos.y - Constants.CHUNK_SIZE,0), chunkDataList.get(chunkPos.sub(0,Constants.CHUNK_SIZE,0)));
+
+        // + - z
+        neighbors.put(chunkPos.add(0,0,chunkPos.z + Constants.CHUNK_SIZE), chunkDataList.get(chunkPos.add(0,0,Constants.CHUNK_SIZE)));
+        neighbors.put(chunkPos.add(0,0,chunkPos.z - Constants.CHUNK_SIZE), chunkDataList.get(chunkPos.sub(0,0,Constants.CHUNK_SIZE)));
+        return neighbors;
     }
-    public void addChunkToChunkList(Vector3i chunkPos, ChunkData chunkData) {
+    private void addChunkToBeRendered(Vector3i chunkPos, ChunkMesh chunkMesh) {
+        currentlyRenderedChunks.put(chunkPos, chunkMesh);
+
+    }
+    private void addChunkToChunkList(Vector3i chunkPos, ChunkData chunkData) {
         chunkDataList.put(chunkPos, chunkData);
     }
 
-    public Block getBlockAtWorldPosition(int x, int y, int z) {
-        // Adjust chunk coordinates to handle negative values correctly
-        int chunkX = (x < 0) ? (((x + 1) / Constants.CHUNK_SIZE) - 1) * 16 : (x / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
-        int chunkY = (y < 0) ? (((y + 1) / Constants.CHUNK_SIZE) - 1) * 16 : (y / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
-        int chunkZ = (z < 0) ? (((z + 1) / Constants.CHUNK_SIZE) - 1) * 16 : (z / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
 
-        Vector3i key = new Vector3i(chunkX, chunkY, chunkZ);
-
-        ChunkData localChunk = chunkDataList.get(key);
-        if (localChunk == null) {
-            //System.out.println(x + " " + y + " " + z);
-            //System.out.println(chunkX + " " + chunkY + " " + chunkZ);
-
-            return Block.AIR;
-        }
-
-        // Use adjusted coordinates to ensure positive local values within the chunk
-        int localX = ((x % Constants.CHUNK_SIZE) + Constants.CHUNK_SIZE) % Constants.CHUNK_SIZE;
-        int localY = ((y % Constants.CHUNK_SIZE) + Constants.CHUNK_SIZE) % Constants.CHUNK_SIZE;
-        int localZ = ((z % Constants.CHUNK_SIZE) + Constants.CHUNK_SIZE) % Constants.CHUNK_SIZE;
-
-        return localChunk.getBlockAtPosition(localX, localY, localZ);
-    }
-
-
-    // get neighbors [back, forward, down, up, left, right]
-    public List<Block> getBlockNeighbors(int x, int y, int z){
-        List<Block> result = new ArrayList<>();
-        result.add(getBlockAtWorldPosition(x, y, z-1)); // Back
-        result.add(getBlockAtWorldPosition(x, y, z+1));  // Forward
-        result.add(getBlockAtWorldPosition(x, y-1, z)); // Down
-        result.add(getBlockAtWorldPosition(x, y+1, z));  // Up
-        result.add(getBlockAtWorldPosition(x-1, y, z)); // Left
-        result.add(getBlockAtWorldPosition(x+1, y, z));  // Right
-        return result;
-    }
 }

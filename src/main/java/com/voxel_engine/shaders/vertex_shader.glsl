@@ -2,11 +2,12 @@
 
 layout(location = 0) in uint packedData;
 
-// Uniforms for view and projection matrices, all block colors
+// Uniforms for view and projection matrices
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform vec3 worldPos;
 uniform vec3 lightDir;
+uniform samplerBuffer chunkBuffer;
+
 
 out vec3 fragColor;
 out vec2 fragUV;
