@@ -73,7 +73,9 @@ public class Engine {
         culledMesher = new CulledMesher();
 
         // create the chunk manager
+        System.out.println("chunkManager");
         chunkManager = new ChunkManager(culledMesher, renderer);
+
 
     }
 

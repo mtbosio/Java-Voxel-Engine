@@ -78,7 +78,6 @@ public class CulledMesher {
 
         ChunkData localChunk = chunkList.get(key);
         if (localChunk == null) {
-            System.out.println("fail");
             return Block.AIR;
         }
 

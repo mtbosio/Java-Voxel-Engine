@@ -7,7 +7,9 @@ import org.joml.Vector2i;
 import org.lwjgl.system.MemoryUtil;
 
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL31C.GL_TEXTURE_BUFFER;
 import static org.lwjgl.opengl.GL31C.glTexBuffer;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
@@ -25,7 +27,7 @@ public class Renderer {
     private Shader shader;
     private Matrix4f projectionMatrix;
 
-    private int textureBuffer; // stores chunk world positions
+    private int ubo; // stores chunk world positions
     private int indirectBuffer; // stores the start index, and the # of following indices
     private int vbo; // stores every chunk's instance data
     private int vao;
@@ -36,6 +38,7 @@ public class Renderer {
 
     public Renderer(Camera camera) {
         this.camera = camera;
+        System.out.println("init");
         init();
     }
 
@@ -69,9 +72,10 @@ public class Renderer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
-        // Create texture buffer
-        textureBuffer = glGenTextures();
-        glBindTexture(GL_TEXTURE_BUFFER, textureBuffer);
+        ubo = glGenBuffers();
+        glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+        glBufferData(GL_UNIFORM_BUFFER, 16 * 1024, GL_DYNAMIC_DRAW); // Allocate 16KB
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo); // Bind to binding point 0
 
         indirectBuffer = glGenBuffers();
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
@@ -132,10 +136,19 @@ public class Renderer {
         totalQuadsRendered += chunkMesh.getInstances().length;
         glBufferData(GL_DRAW_INDIRECT_BUFFER, indirectBuffer, GL_STATIC_DRAW);
 
-        int[] chunkPositions = new int[]{chunkData.getWorldX(), chunkData.getWorldY(), chunkData.getWorldZ()};
-        glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, chunkPositions);
+        // Update UBO with chunk positions
+        IntBuffer chunkPositions = MemoryUtil.memAllocInt(3);
+        chunkPositions.put(0, chunkData.getWorldX());
+        chunkPositions.put(1, chunkData.getWorldY());
+        chunkPositions.put(2, chunkData.getWorldZ());
 
+        glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+        glBufferSubData(GL_UNIFORM_BUFFER, chunksBeingRenderedCount * 12, chunkPositions); // Update UBO at the appropriate offset
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+        MemoryUtil.memFree(chunkPositions);
+
+        glBufferData(GL_ARRAY_BUFFER, chunkMesh.getInstances(), GL_STATIC_DRAW);
 
     }
 

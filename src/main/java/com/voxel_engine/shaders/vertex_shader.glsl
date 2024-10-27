@@ -6,8 +6,11 @@ layout(location = 0) in uint packedData;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform vec3 lightDir;
-uniform samplerBuffer chunkBuffer;
 
+// Uniform Buffer Object for chunk positions
+layout(std140) uniform ChunkPositions {
+    vec3 chunkOffsets[256]; // Assuming a maximum of 256 chunks
+};
 
 out vec3 fragColor;
 out vec2 fragUV;
@@ -82,6 +85,7 @@ void main() {
         // Normal facing -z
         finalPosition = vec3(baseVertex.x, baseVertex.z, baseVertex.y);
     }
+    vec3 worldPos = chunkOffsets[gl_InstanceID];
     // Apply world position offset (e.g., chunk position)
     vec4 world_position = vec4(worldPos.x, worldPos.y, worldPos.z, 0.0);
     vec4 local_position = vec4(x,y,z, 0.0);

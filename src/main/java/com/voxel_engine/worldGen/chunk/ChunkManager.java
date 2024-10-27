@@ -26,8 +26,14 @@ public class ChunkManager {
         this.chunkDataList = new HashMap<>();
         this.culledMesher = culledMesher;
         this.renderer = renderer;
-        initializeWorldChunkData();
-        initializeWorldChunkMesh();
+        //initializeWorldChunkData();
+        //initializeWorldChunkMesh();
+        addChunkToChunkList(new Vector3i(16,0,0), new ChunkData(16, 0,0));
+        ChunkData chunkData = chunkDataList.get(new Vector3i(16,0,0));
+        Map<Vector3i, ChunkData> neighbors = getNeighbors(chunkData);
+        ChunkMesh chunkMesh = culledMesher.buildChunkMesh(chunkData, neighbors);
+        addChunkToBeRendered(new Vector3i(16,0,0), chunkMesh);
+        renderer.addChunk(chunkData, chunkMesh);
     }
 
     private void initializeWorldChunkData(){
