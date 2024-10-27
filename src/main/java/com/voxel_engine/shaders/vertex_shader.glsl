@@ -6,7 +6,7 @@ layout(location = 0) in uint packedData;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform vec3 lightDir;
-uniform samplerBuffer chunkBuffer;
+uniform vec3 worldPos;
 
 
 out vec3 fragColor;

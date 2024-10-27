@@ -1,6 +1,7 @@
 package com.voxel_engine.render;
 
 import com.voxel_engine.worldGen.chunk.ChunkData;
+import com.voxel_engine.worldGen.chunk.ChunkManager;
 import org.joml.Matrix4f;
 import com.voxel_engine.player.Camera;
 import org.joml.Vector2i;
@@ -21,21 +22,13 @@ public class Renderer {
     private long lastTime = System.nanoTime();
     private int frames = 0;
     private int fps = 0;
+    private ChunkManager chunkManager;
     private final Camera camera;
     private Shader shader;
     private Matrix4f projectionMatrix;
-
-    private int textureBuffer; // stores chunk world positions
-    private int indirectBuffer; // stores the start index, and the # of following indices
-    private int vbo; // stores every chunk's instance data
-    private int vao;
-    private int ebo;
-    private int chunksBeingRenderedCount = 0;
-    private int totalQuadsRendered = 0;
-    private int[] indices = {0,1,2,0,2,3};
-
-    public Renderer(Camera camera) {
+    public Renderer(Camera camera, ChunkManager chunkManager) {
         this.camera = camera;
+        this.chunkManager = chunkManager;
         init();
     }
 
@@ -47,34 +40,11 @@ public class Renderer {
         glCullFace(GL_BACK);
         glFrontFace(GL_CW);
 
-        vao = glGenVertexArrays();
-        glBindVertexArray(vao);
-
         // Create and compile the shader program
         shader = new Shader("main/java/com/voxel_engine/shaders/vertex_shader.glsl", "main/java/com/voxel_engine/shaders/fragment_shader.glsl");
 
         // Set up projection matrix
         projectionMatrix = new Matrix4f().perspective((float) Math.toRadians(45.0), (float) 800f / (float) 600f, 0.1f, 2000);
-
-        // Create vbo
-        vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-        glEnableVertexAttribArray(0); // packed vert_data
-        glVertexAttribIPointer(0, 1, GL_UNSIGNED_INT, Integer.BYTES, 0);
-        glVertexAttribDivisor(0, 1);
-
-        // Create EBO and upload index data
-        ebo = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-
-        // Create texture buffer
-        textureBuffer = glGenTextures();
-        glBindTexture(GL_TEXTURE_BUFFER, textureBuffer);
-
-        indirectBuffer = glGenBuffers();
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
     }
 
     public void checkOpenGLError() {
@@ -103,41 +73,23 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear buffers
         shader.use(); // Activate the shader program
 
-        glBindVertexArray(vao);
-
         // Update the view matrix based on the camera
         Matrix4f viewMatrix = camera.getViewMatrix(); // Get the view matrix from the camera
-
-        calculateFrames();
 
         // Pass matrices to shader
         shader.setUniformMatrix("projectionMatrix", projectionMatrix); // Set the projection matrix uniform
         shader.setUniformMatrix("viewMatrix", viewMatrix); // Set the view matrix uniform
 
-        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, 0, chunksBeingRenderedCount, 0);
+        calculateFrames();
+
+        for(ChunkMesh chunkMesh : chunkManager.getCurrentlyRenderedChunks().values()){
+            chunkMesh.render(shader);
+        }
 
         checkOpenGLError();
         glBindVertexArray(0); // Unbind VAO
     }
 
-    public void addChunk(ChunkData chunkData, ChunkMesh chunkMesh){
-        // indirect buffer setup
-        IntBuffer buffer = MemoryUtil.memAllocInt(5);
-        buffer.put(0, 6); // amount of indices to use, 6 => 3 for each triangle of a quad
-        buffer.put(1, chunkMesh.getInstances().length); // amount of quads to draw
-        buffer.put(2, 0); // offset into the ebo
-        buffer.put(3, 0); // offset in the vertex data, these both should always be 0
-        buffer.put(4, totalQuadsRendered + chunkMesh.getInstances().length); // used to reference which instance this is
-        chunksBeingRenderedCount++;
-        totalQuadsRendered += chunkMesh.getInstances().length;
-        glBufferData(GL_DRAW_INDIRECT_BUFFER, indirectBuffer, GL_STATIC_DRAW);
-
-        int[] chunkPositions = new int[]{chunkData.getWorldX(), chunkData.getWorldY(), chunkData.getWorldZ()};
-        glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, chunkPositions);
-
-
-
-    }
 
     public void cleanUp(){
         // Unbind
@@ -146,6 +98,11 @@ public class Renderer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+
+        for(ChunkMesh chunkMesh : chunkManager.getCurrentlyRenderedChunks().values()){
+            chunkMesh.cleanup();
+        }
+
         shader.cleanup();
     }
     public void calculateFrames(){

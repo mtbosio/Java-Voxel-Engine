@@ -24,7 +24,6 @@ public class ChunkData {
                 // Loop through the y levels in the chunk
                 double height = Engine.terrainGenerator.getHeight(worldX + x, worldZ + z);
                 int roundedHeight = (int) Math.round(height);
-
                 for(int y = 0; y < Constants.CHUNK_SIZE; y++){
                     if(worldY + y == roundedHeight){
                         blocks[getIndex(x,y,z)] = Block.GRASS;

@@ -70,15 +70,14 @@ public class CulledMesher {
 
     private Block getBlockAtWorldPosition(Map<Vector3i, ChunkData> chunkList, int x, int y, int z) {
         // Adjust chunk coordinates to handle negative values correctly
-        int chunkX = (x < 0) ? (((x + 1) / Constants.CHUNK_SIZE) - 1) * 16 : (x / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
-        int chunkY = (y < 0) ? (((y + 1) / Constants.CHUNK_SIZE) - 1) * 16 : (y / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
-        int chunkZ = (z < 0) ? (((z + 1) / Constants.CHUNK_SIZE) - 1) * 16 : (z / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
+        int chunkX = (x < 0) ? (((x + 1) / Constants.CHUNK_SIZE) - 1) * Constants.CHUNK_SIZE : (x / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
+        int chunkY = (y < 0) ? (((y + 1) / Constants.CHUNK_SIZE) - 1) * Constants.CHUNK_SIZE : (y / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
+        int chunkZ = (z < 0) ? (((z + 1) / Constants.CHUNK_SIZE) - 1) * Constants.CHUNK_SIZE : (z / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
 
         Vector3i key = new Vector3i(chunkX, chunkY, chunkZ);
 
         ChunkData localChunk = chunkList.get(key);
         if (localChunk == null) {
-            System.out.println("fail");
             return Block.AIR;
         }
 

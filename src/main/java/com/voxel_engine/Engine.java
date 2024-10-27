@@ -66,15 +66,14 @@ public class Engine {
         // create a static terrainGenerator that can be accessed from any chunk
         terrainGenerator = TerrainGenerator.getInstance();
 
-        // Create the renderer
-        renderer = new Renderer(camera);
-
         // create a mesher that can be accessed from the World to create meshes for chunks
         culledMesher = new CulledMesher();
 
         // create the chunk manager
-        chunkManager = new ChunkManager(culledMesher, renderer);
+        chunkManager = new ChunkManager(culledMesher);
 
+        // Create the renderer
+        renderer = new Renderer(camera, chunkManager);
     }
 
     private void loop() {
