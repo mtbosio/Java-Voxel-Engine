@@ -1,23 +1,28 @@
 package com.voxel_engine.worldGen.greedyMesher;
+import com.voxel_engine.render.ChunkMesh;
+import com.voxel_engine.utils.Constants;
+import com.voxel_engine.utils.Direction;
+import com.voxel_engine.worldGen.chunk.Block;
+import com.voxel_engine.worldGen.chunk.ChunkData;
+import org.joml.Vector3i;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GreedyMesher {
-    /*
-    public ChunkMesh buildChunkMesh(ChunkRefs chunkRefs) {
+    public ChunkMesh buildChunkMesh(ChunkData chunkData, Map<Vector3i, ChunkData> chunkNeighbors) {
         long[][][] axisCols = new long[3][Constants.CHUNK_SIZE_P][Constants.CHUNK_SIZE_P];
         long[][][] colFaceMasks = new long[6][Constants.CHUNK_SIZE_P][Constants.CHUNK_SIZE_P];
 
-
-        // middle chunk in a 3x3
-        ChunkData chunk = chunkRefs.getChunks().get(5);
-        ChunkMesh mesh = new ChunkMesh(chunk);
+        ChunkMesh chunkMesh = new ChunkMesh(chunkData);
 
         // creating axisCols for inner chunks
         for (int z = 0; z < Constants.CHUNK_SIZE; z++) {
             for (int y = 0; y < Constants.CHUNK_SIZE; y++) {
                 for (int x = 0; x < Constants.CHUNK_SIZE; x++) {
-                    int i = (chunk.getBlocks().length == 1) ? 0 : (y * Constants.CHUNK_SIZE * Constants.CHUNK_SIZE) + (z * Constants.CHUNK_SIZE) + x;
-                    addVoxelToAxisCols(chunk.getBlocks()[i], x + 1, y + 1 , z + 1, axisCols);
+                    addVoxelToAxisCols(chunkData.getBlockAtPosition(x,y,z), x + 1, y + 1 , z + 1, axisCols);
                 }
             }
         }
@@ -27,7 +32,7 @@ public class GreedyMesher {
             for (int y = 0; y < Constants.CHUNK_SIZE_P; y++) {
                 for (int x = 0; x < Constants.CHUNK_SIZE_P; x++) {
                     Vector3i pos = new Vector3i(x, y, z).sub(1, 1, 1);
-                    addVoxelToAxisCols(chunkRefs.getBlock(pos), x, y, z, axisCols);
+                    addVoxelToAxisCols(getBlockAtWorldPosition(chunkNeighbors, pos.x,pos.y, pos.z), x, y, z, axisCols);
                 }
             }
         }
@@ -36,7 +41,7 @@ public class GreedyMesher {
             for (int y : new int[]{0, Constants.CHUNK_SIZE_P - 1}) {
                 for (int x = 0; x < Constants.CHUNK_SIZE_P; x++) {
                     Vector3i pos = new Vector3i(x, y, z).sub(1, 1, 1);
-                    addVoxelToAxisCols(chunkRefs.getBlock(pos), x, y, z, axisCols);
+                    addVoxelToAxisCols(getBlockAtWorldPosition(chunkNeighbors, pos.x,pos.y, pos.z), x, y, z, axisCols);
                 }
             }
         }
@@ -45,7 +50,7 @@ public class GreedyMesher {
             for (int x : new int[]{0, Constants.CHUNK_SIZE_P - 1}) {
                 for (int y = 0; y < Constants.CHUNK_SIZE_P; y++) {
                     Vector3i pos = new Vector3i(x, y, z).sub(1, 1, 1);
-                    addVoxelToAxisCols(chunkRefs.getBlock(pos), x, y, z, axisCols);
+                    addVoxelToAxisCols(getBlockAtWorldPosition(chunkNeighbors, pos.x,pos.y, pos.z), x, y, z, axisCols);
                 }
             }
         }
@@ -102,7 +107,7 @@ public class GreedyMesher {
                                 voxelPos = new Vector3i(x, z, y);
                         }
 
-                        Block currentVoxel = chunkRefs.getBlockNoNeighbor(voxelPos);
+                        Block currentVoxel = chunkData.getBlockAtPosition(voxelPos.x, voxelPos.y, voxelPos.z);
                         int blockHash = currentVoxel.getId();
                         if(currentVoxel == Block.AIR){
                             System.out.println("AIR");
@@ -117,7 +122,7 @@ public class GreedyMesher {
             }
         }
 
-        List<Integer> vertices = new ArrayList<>();
+        List<Integer> instances = new ArrayList<>();
         for (int axis = 0; axis < data.length; axis++) {
             Direction direction;
 
@@ -139,19 +144,16 @@ public class GreedyMesher {
                     List<GreedyQuad> quadsFromAxis = greedyMeshBinaryPlane(plane, Constants.CHUNK_SIZE);
 
                     for (GreedyQuad q : quadsFromAxis) {
-                        q.appendVertices(vertices, direction, axisPos, blockType);
+                        q.appendInstance(instances, direction, axisPos, blockType);
                     }
                 }
             }
         }
 
-        mesh.setVertices(vertices);
-        if (mesh.getVerticesAsList().isEmpty()) {
-            return null;
-        } else {
-            mesh.setIndices(generateIndices(mesh.getVerticesAsList().size()));
-            return mesh;
-        }
+        chunkMesh.setInstances(instances);
+
+        return chunkMesh;
+
     }
     private void addVoxelToAxisCols(Block b, int x, int y, int z, long[][][] axisCols) {
         if (b.isSolid()) {
@@ -162,23 +164,6 @@ public class GreedyMesher {
             // x,y - z axis
             axisCols[2][y][x] |= 1L << z;
         }
-    }
-
-    public static List<Integer> generateIndices(int vertexCount) {
-        int indicesCount = vertexCount / 4;
-        List<Integer> indices = new ArrayList<>(indicesCount * 6);
-
-        for (int vertIndex = 0; vertIndex < indicesCount; vertIndex++) {
-            int baseIndex = vertIndex * 4;
-            indices.add(baseIndex);
-            indices.add(baseIndex + 1);
-            indices.add(baseIndex + 2);
-            indices.add(baseIndex);
-            indices.add(baseIndex + 2);
-            indices.add(baseIndex + 3);
-        }
-
-        return indices;
     }
 
     private List<GreedyQuad> greedyMeshBinaryPlane(int[] data, int lodSize) {
@@ -220,7 +205,29 @@ public class GreedyMesher {
         }
         return greedyQuads;
     }
+
+    private Block getBlockAtWorldPosition(Map<Vector3i, ChunkData> chunkList, int x, int y, int z) {
+        // Adjust chunk coordinates to handle negative values correctly
+        int chunkX = (x < 0) ? (((x + 1) / Constants.CHUNK_SIZE) - 1) * Constants.CHUNK_SIZE : (x / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
+        int chunkY = (y < 0) ? (((y + 1) / Constants.CHUNK_SIZE) - 1) * Constants.CHUNK_SIZE : (y / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
+        int chunkZ = (z < 0) ? (((z + 1) / Constants.CHUNK_SIZE) - 1) * Constants.CHUNK_SIZE : (z / Constants.CHUNK_SIZE) * Constants.CHUNK_SIZE;
+
+        Vector3i key = new Vector3i(chunkX, chunkY, chunkZ);
+
+        ChunkData localChunk = chunkList.get(key);
+        if (localChunk == null) {
+            return Block.AIR;
+        }
+
+        // Use adjusted coordinates to ensure positive local values within the chunk
+        int localX = ((x % Constants.CHUNK_SIZE) + Constants.CHUNK_SIZE) % Constants.CHUNK_SIZE;
+        int localY = ((y % Constants.CHUNK_SIZE) + Constants.CHUNK_SIZE) % Constants.CHUNK_SIZE;
+        int localZ = ((z % Constants.CHUNK_SIZE) + Constants.CHUNK_SIZE) % Constants.CHUNK_SIZE;
+
+        return localChunk.getBlockAtPosition(localX, localY, localZ);
+    }
+
     private static int numberOfTrailingOnes(int value) {
         return Integer.numberOfTrailingZeros(~value);
-    } */
+    }
 }

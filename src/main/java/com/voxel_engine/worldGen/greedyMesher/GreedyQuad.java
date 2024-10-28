@@ -5,7 +5,7 @@ import org.joml.Vector3i;
 
 import java.util.*;
 public class GreedyQuad {
-    /*private int x, y, w, h;
+    private int x, y, w, h;
 
     // Constructor for initialization
     public GreedyQuad(int x, int y, int w, int h) {
@@ -15,67 +15,41 @@ public class GreedyQuad {
         this.h = h;
     }
 
-    // Method to compress this quad data into the input vertices list
-    public void appendVertices(
-            List<Integer> vertices,
+    // Method to compress this quad data into the instance list
+    public void appendInstance(
+            List<Integer> instances,
             Direction direction,
             int axis,
             int blockType
     ) {
-        // Convert axis to int and get jump value
-        int axisInt = axis;
-
-        // Create vertices based on the given parameters
-        int v1 = makeVertexU32(
-                direction.worldToSample(axisInt, x, y),
-                0,
+        Vector3i pos = direction.worldToSample(axis, x, y);
+        int instance = makeInstanceDataU32(
+                pos.x,
+                pos.y,
+                pos.z,
                 direction.normalIndex(),
-                blockType
-        );
-        int v2 = makeVertexU32(
-                direction.worldToSample(axisInt, x + w, y),
-                0,
-                direction.normalIndex(),
-                blockType
-        );
-        int v3 = makeVertexU32(
-                direction.worldToSample(axisInt, x + w, y + h),
-                0,
-                direction.normalIndex(),
-                blockType
-        );
-        int v4 = makeVertexU32(
-                direction.worldToSample(axisInt, x, y + h),
-                0,
-                direction.normalIndex(),
-                blockType
+                blockType,
+                w,
+                w
         );
 
-        // Create a list to store new vertices
-        LinkedList<Integer> newVertices = new LinkedList<>(Arrays.asList(v1, v2, v3, v4));
+        instances.add(instance);
 
-        // Triangle vertex order may need to be reversed
-        if (direction.reverseOrder()) {
-            // Keep the first index but reverse the rest
-            List<Integer> o = new ArrayList<>(newVertices.subList(1, newVertices.size()));
-            Collections.reverse(o);
-            for (int i = 1; i < newVertices.size(); i++) {
-                newVertices.set(i, o.get(i - 1));
-            }
-        }
-
-        if ((v1 > 0) ^ (v3 > 0)) {
-            // Rotate the array to swap the triangle intersection angle
-            Integer first = newVertices.pollFirst();
-            newVertices.addLast(first);
-        }
-
-        // Add the new vertices to the input list
-        vertices.addAll(newVertices);
     }
+    public static int makeInstanceDataU32(int x, int y, int z, int normal, int blockId, int width, int height) {
+        // Ensure the input values fit within their respective bit limits
+        x = x & 0xF;         // 4 bits
+        y = y & 0xF;         // 4 bits
+        z = z & 0xF;         // 4 bits
+        normal = normal & 0x7;   // 3 bits
+        blockId = blockId & 0x1FF; // 9 bits
+        width = width & 0xF;    // 4 bits
+        height = height & 0xF;  // 4 bits
 
-    // Placeholder for the makeVertexU32 method
+        // Pack the values into a single 32-bit integer
+        int packedData = (x << 28) | (y << 24) | (z << 20) | (normal << 17) |
+                (blockId << 8) | (width << 4) | height;
 
-
-    */
+        return packedData;
+    }
 }

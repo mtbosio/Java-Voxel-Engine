@@ -12,15 +12,6 @@ uniform vec3 worldPos;
 out vec3 fragColor;
 out vec2 fragUV;
 
-// quad facing +y direction
-const vec3 quadVertices[4] = vec3[](
-    vec3(0, 0, 0),   // Bottom-left (0, 0, 0)
-    vec3(1, 0, 0),   // Bottom-right (1, 0, 0)
-    vec3(1, 0, 1),   // Top-right (1, 0, 1)
-    vec3(0, 0, 1)    // Top-left (0, 0, 1)
-);
-
-
 vec3 block_colors[3] = vec3[](
     vec3(0.0, 0.0, 0.0), // Block type 0: Default (black or unused)
     vec3(0.55, 0.27, 0.07), // Block type 1: Dirt (brown)
@@ -54,34 +45,65 @@ void main() {
 
     vec3 normal = normals[normal_index];
 
-    // Get the base vertex for the quad
-    vec3 baseVertex = quadVertices[gl_VertexID];
-    baseVertex = vec3(baseVertex.x * float(width), baseVertex.y * float(height), baseVertex.z);
-
-    vec3 finalPosition = baseVertex;
-
     // Adjust positioning and rotation based on normal direction
-
+    vec3 baseVertex;
     // Adjust positioning and rotation based on normal direction
     if(normal_index == 0){
         // Normal facing -x
-        finalPosition = vec3(baseVertex.y, baseVertex.x, baseVertex.z);
+        vec3 quadVertices[4] = vec3[](
+            vec3(0, height, 0),
+            vec3(0, height, width),
+            vec3(0, 0, width),
+            vec3(0, 0, 0)
+        );
+        baseVertex = quadVertices[gl_VertexID];
     } else if(normal_index == 1){
         // Normal facing +x
-        finalPosition = vec3(-baseVertex.y + 1.0, baseVertex.z, baseVertex.x);
+        vec3 quadVertices[4] = vec3[](
+            vec3(1, height, 0),
+            vec3(1, 0, 0),
+            vec3(1, 0, width),
+            vec3(1, height, width)
+        );
+        baseVertex = quadVertices[gl_VertexID];
     } else if(normal_index == 2){
         // Normal facing -y
-        finalPosition = vec3(baseVertex.z, baseVertex.y, baseVertex.x);
+        vec3 quadVertices[4] = vec3[](
+            vec3(0, 0, 0),
+            vec3(0, 0, height),
+            vec3(width, 0, height),
+            vec3(width, 0, 0)
+        );
+        baseVertex = quadVertices[gl_VertexID];
     } else if(normal_index == 3){
-        // Normal facing +y
-        finalPosition = vec3(baseVertex.x, baseVertex.y + 1.0, baseVertex.z);
+        // quad facing +y direction
+        vec3 quadVertices[4] = vec3[](
+            vec3(0, 1, 0),
+            vec3(width, 1, 0),
+            vec3(width, 1, height),
+            vec3(0, 1, height)
+        );
+        baseVertex = quadVertices[gl_VertexID];
     } else if(normal_index == 4){
         // Normal facing +z
-        finalPosition = vec3(baseVertex.x, -baseVertex.z + 1.0, baseVertex.y + 1.0);
+        vec3 quadVertices[4] = vec3[](
+            vec3(0, height, 1),
+            vec3(width, height, 1),
+            vec3(width, 0, 1),
+            vec3(0, 0, 1)
+        );
+        baseVertex = quadVertices[gl_VertexID];
     } else if(normal_index == 5){
         // Normal facing -z
-        finalPosition = vec3(baseVertex.x, baseVertex.z, baseVertex.y);
+        vec3 quadVertices[4] = vec3[](
+            vec3(0, 0, 0),
+            vec3(width, 0, 0),
+            vec3(width, height, .0),
+            vec3(0, height, 0)
+        );
+        baseVertex = quadVertices[gl_VertexID];
     }
+    vec3 finalPosition = baseVertex;
     // Apply world position offset (e.g., chunk position)
     vec4 world_position = vec4(worldPos.x, worldPos.y, worldPos.z, 0.0);
     vec4 local_position = vec4(x,y,z, 0.0);

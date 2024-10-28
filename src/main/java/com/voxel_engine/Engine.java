@@ -7,6 +7,9 @@ import static org.lwjgl.system.MemoryUtil.*;
 import com.voxel_engine.render.Renderer;
 import com.voxel_engine.utils.TerrainGenerator;
 import com.voxel_engine.worldGen.culledMesher.CulledMesher;
+import com.voxel_engine.worldGen.greedyMesher.GreedyMesher;
+import com.voxel_engine.worldGen.greedyMesher.GreedyMesher2;
+import com.voxel_engine.worldGen.greedyMesher.GreedyQuad;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 import com.voxel_engine.player.Camera;
@@ -22,6 +25,7 @@ public class Engine {
     private MouseHandler mouseHandler;
     public static TerrainGenerator terrainGenerator;
     private CulledMesher culledMesher;
+    private GreedyMesher2 greedyMesher;
     private PlayerInput playerInput;
     private ChunkManager chunkManager;
 
@@ -67,10 +71,12 @@ public class Engine {
         terrainGenerator = TerrainGenerator.getInstance();
 
         // create a mesher that can be accessed from the World to create meshes for chunks
-        culledMesher = new CulledMesher();
+        //culledMesher = new CulledMesher();
+        greedyMesher = new GreedyMesher2();
 
         // create the chunk manager
-        chunkManager = new ChunkManager(culledMesher);
+        //chunkManager = new ChunkManager(culledMesher);
+        chunkManager = new ChunkManager(greedyMesher);
 
         // Create the renderer
         renderer = new Renderer(camera, chunkManager);

@@ -52,6 +52,10 @@ public class ChunkMesh {
         //System.out.println(instances);
     }
 
+    public int[] getInstances(){
+        return instances;
+    }
+
     public void render(Shader shader){
         glBindVertexArray(vaoId);
 

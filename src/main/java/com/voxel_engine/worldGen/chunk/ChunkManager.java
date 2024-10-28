@@ -2,10 +2,16 @@ package com.voxel_engine.worldGen.chunk;
 
 import com.voxel_engine.render.ChunkMesh;
 import com.voxel_engine.utils.Constants;
+import com.voxel_engine.utils.Direction;
 import com.voxel_engine.worldGen.culledMesher.CulledMesher;
+import com.voxel_engine.worldGen.greedyMesher.GreedyMesher;
+import com.voxel_engine.worldGen.greedyMesher.GreedyMesher2;
+import com.voxel_engine.worldGen.greedyMesher.GreedyQuad;
 import org.joml.Vector3i;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,19 +24,33 @@ public class ChunkManager {
     private final static int WORLD_SIZE = 3;
     private Map<Vector3i, ChunkMesh> currentlyRenderedChunks; // all chunks being rendered
     private Map<Vector3i, ChunkData> chunkDataList; // all chunks that have been initialized
-    private CulledMesher culledMesher;
-    public ChunkManager(CulledMesher culledMesher) {
+    private GreedyMesher2 greedyMesher;
+    public ChunkManager(GreedyMesher2 greedyMesher) {
         this.currentlyRenderedChunks = new HashMap<>();
         this.chunkDataList = new HashMap<>();
-        this.culledMesher = culledMesher;
+        this.greedyMesher = greedyMesher;
         initializeWorldChunkData();
         initializeWorldChunkMesh();
+        /*ChunkData chunkData = new ChunkData(0,0,0);
+        ChunkMesh chunkMesh = new ChunkMesh(chunkData);
+        List<Integer> instances = new ArrayList<Integer>();
+        instances.add(GreedyQuad.makeInstanceDataU32(0,10,0, Direction.UP.normalIndex(), 1,10,10));
+        instances.add(GreedyQuad.makeInstanceDataU32(0,0,0, Direction.DOWN.normalIndex(), 1,10,10));
+        instances.add(GreedyQuad.makeInstanceDataU32(0,0,0, Direction.LEFT.normalIndex(), 1,10,10));
+        instances.add(GreedyQuad.makeInstanceDataU32(10,0,0, Direction.RIGHT.normalIndex(), 1,10,10));
+        instances.add(GreedyQuad.makeInstanceDataU32(0,0,10, Direction.FORWARD.normalIndex(), 1,10,10));
+        instances.add(GreedyQuad.makeInstanceDataU32(0,0,0, Direction.BACK.normalIndex(), 1,10,10));
+
+        chunkMesh.setInstances(instances);
+        currentlyRenderedChunks.put(new Vector3i(0,0,0), chunkMesh);*/
     }
+
+
 
     private void initializeWorldChunkData(){
         for(int x = -WORLD_SIZE; x< WORLD_SIZE; x++){
             for(int z = -WORLD_SIZE; z< WORLD_SIZE; z++){
-                for(int y = WORLD_SIZE; y< WORLD_SIZE + 5; y++){
+                for(int y = WORLD_SIZE; y< WORLD_SIZE + 10; y++){
                     addChunkToChunkList(new Vector3i(x * Constants.CHUNK_SIZE,y * Constants.CHUNK_SIZE,z * Constants.CHUNK_SIZE), new ChunkData(x * Constants.CHUNK_SIZE,y * Constants.CHUNK_SIZE,z * Constants.CHUNK_SIZE));
                 }
             }
@@ -39,10 +59,10 @@ public class ChunkManager {
     private void initializeWorldChunkMesh(){
         for(int x = -WORLD_SIZE; x< WORLD_SIZE; x++){
             for(int z = -WORLD_SIZE; z< WORLD_SIZE; z++){
-                for(int y = WORLD_SIZE; y< WORLD_SIZE + 5; y++){
+                for(int y = WORLD_SIZE; y< WORLD_SIZE + 10; y++){
                     ChunkData chunkData = chunkDataList.get(new Vector3i(x * Constants.CHUNK_SIZE,y * Constants.CHUNK_SIZE,z * Constants.CHUNK_SIZE));
                     Map<Vector3i, ChunkData> neighbors = getNeighbors(chunkData);
-                    ChunkMesh chunkMesh = culledMesher.buildChunkMesh(chunkData, neighbors);
+                    ChunkMesh chunkMesh = greedyMesher.buildChunkMesh(chunkData, neighbors);
                     addChunkToBeRendered(new Vector3i(x * Constants.CHUNK_SIZE,y * Constants.CHUNK_SIZE,z * Constants.CHUNK_SIZE), chunkMesh);
                 }
             }

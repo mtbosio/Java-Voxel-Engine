@@ -37,7 +37,7 @@ public class TerrainGenerator {
 
     public static TerrainGenerator getInstance() {
         if (instance == null) {
-            instance = new TerrainGenerator(12343);
+            instance = new TerrainGenerator(24567);
         }
         return instance;
     }
