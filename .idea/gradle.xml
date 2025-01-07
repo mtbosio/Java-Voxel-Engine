@@ -11,7 +11,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/main" />
+            <option value="$PROJECT_DIR$/com.voxel_engine.main" />
           </set>
         </option>
       </GradleProjectSettings>

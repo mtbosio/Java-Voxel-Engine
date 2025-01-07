@@ -1,12 +1,15 @@
 package com.voxel_engine.worldGen.chunk;
 import com.voxel_engine.Engine;
 import com.voxel_engine.utils.Constants;
+import org.joml.Vector3i;
+
+import java.util.Map;
 
 public class ChunkData {
 
     private Block[] blocks;  // Use a fixed-size array to store blocks
 
-
+    private Map<Vector3i, ChunkData> neighbors;
     private int worldX, worldY, worldZ;
 
     public ChunkData(int worldX, int worldY, int worldZ) {
@@ -57,5 +60,13 @@ public class ChunkData {
     }
     public int getWorldZ() {
         return worldZ;
+    }
+
+    public Map<Vector3i, ChunkData> getNeighbors() {
+        return neighbors;
+    }
+
+    public void setNeighbors(Map<Vector3i, ChunkData> neighbors){
+        this.neighbors = neighbors;
     }
 }

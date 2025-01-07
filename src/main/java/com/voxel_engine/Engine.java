@@ -8,6 +8,7 @@ import com.voxel_engine.render.Renderer;
 import com.voxel_engine.utils.TerrainGenerator;
 import com.voxel_engine.worldGen.culledMesher.CulledMesher;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import com.voxel_engine.player.Camera;
 import com.voxel_engine.player.MouseHandler;
@@ -53,7 +54,7 @@ public class Engine {
         GL.createCapabilities();
 
         // create the camera and mouse handler
-        camera = new Camera(new Vector3f(-5f,0f,0f), new Vector3f(1f,0f,0f), new Vector3f(0,1,0));
+        camera = new Camera(new Vector3f(0f,150f,0f), new Vector3f(1f,0f,0f), new Vector3f(0,1,0));
         playerInput = new PlayerInput(camera);
         mouseHandler = new MouseHandler(camera);
 
@@ -62,6 +63,7 @@ public class Engine {
 
         // hide the cursor and lock it to the window center for a first-person camera experience
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        org.lwjgl.glfw.GLFW.glfwSwapInterval(0);
 
         // create a static terrainGenerator that can be accessed from any chunk
         terrainGenerator = TerrainGenerator.getInstance();
@@ -70,7 +72,7 @@ public class Engine {
         culledMesher = new CulledMesher();
 
         // create the chunk manager
-        chunkManager = new ChunkManager(culledMesher);
+        chunkManager = new ChunkManager(culledMesher, camera);
 
         // Create the renderer
         renderer = new Renderer(camera, chunkManager);

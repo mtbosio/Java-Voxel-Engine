@@ -80,9 +80,11 @@ public class Renderer {
         shader.setUniformMatrix("projectionMatrix", projectionMatrix); // Set the projection matrix uniform
         shader.setUniformMatrix("viewMatrix", viewMatrix); // Set the view matrix uniform
 
+        chunkManager.updateChunks();
+
         calculateFrames();
 
-        for(ChunkMesh chunkMesh : chunkManager.getCurrentlyRenderedChunks().values()){
+        for(ChunkMesh chunkMesh : chunkManager.getChunkMeshMap().values()){
             chunkMesh.render(shader);
         }
 
@@ -99,9 +101,11 @@ public class Renderer {
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 
-        for(ChunkMesh chunkMesh : chunkManager.getCurrentlyRenderedChunks().values()){
+        for(ChunkMesh chunkMesh : chunkManager.getChunkMeshMap().values()){
             chunkMesh.cleanup();
         }
+
+        chunkManager.shutdown();
 
         shader.cleanup();
     }

@@ -10,7 +10,7 @@ public class Camera {
 
     private float yaw = 0f;  // Initialize facing forward
     private float pitch = 0.0f;
-    private float speed = 0.5f;  // Adjust the speed to your preference
+    private float speed = 0.1f;  // Adjust the speed to your preference
 
     public Camera(Vector3f position, Vector3f direction, Vector3f up) {
         this.position = position;
@@ -70,5 +70,9 @@ public class Camera {
         float y = (float) Math.sin(Math.toRadians(pitch));
         float z = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
         direction.set(x, y, z).normalize();
+    }
+
+    public Vector3f getPosition(){
+        return position;
     }
 }

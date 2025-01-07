@@ -14,6 +14,11 @@ import java.util.Map;
 public class CulledMesher {
     public ChunkMesh buildChunkMesh(ChunkData chunkData, Map<Vector3i, ChunkData> chunkNeighbors) {
         ChunkMesh chunkMesh = new ChunkMesh(chunkData);
+
+        if(chunkData.getWorldY() > 255){
+            return chunkMesh;
+        }
+
         List<Integer> instanceList = new ArrayList<>();
         for (int x = 0; x < Constants.CHUNK_SIZE; x++) {
             for (int y = 0; y < Constants.CHUNK_SIZE; y++) {
@@ -78,7 +83,7 @@ public class CulledMesher {
 
         ChunkData localChunk = chunkList.get(key);
         if (localChunk == null) {
-            return Block.AIR;
+            return Block.DIRT;
         }
 
         // Use adjusted coordinates to ensure positive local values within the chunk

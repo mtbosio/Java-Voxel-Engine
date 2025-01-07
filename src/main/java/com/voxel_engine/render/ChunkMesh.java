@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL33C.glVertexAttribDivisor;
 
 public class ChunkMesh {
     private ChunkData chunkData;
+    private Boolean initialized = false;
     private int vaoId;
     private int vboId;
     private int eboId;
@@ -19,7 +20,10 @@ public class ChunkMesh {
 
     public ChunkMesh(ChunkData chunkData){
         this.chunkData = chunkData;
+    }
 
+    public void init(){
+        initialized = true;
         vaoId = glGenVertexArrays();
         glBindVertexArray(vaoId);
 
@@ -44,15 +48,21 @@ public class ChunkMesh {
 
     public void setInstances(List<Integer> instances){
         this.instances = instances.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    public void bindInstances(){
         // Update VBO with vertex data
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, this.instances, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        //System.out.println("Chunk Pos: " + chunkData.getWorldX() + " " + chunkData.getWorldY() + " " + chunkData.getWorldZ());
-        //System.out.println(instances);
+        if(instances != null && instances.length > 0){
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            glBufferData(GL_ARRAY_BUFFER, instances, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+        }
     }
 
     public void render(Shader shader){
+        if(instances == null || instances.length == 0){
+            return;
+        }
         glBindVertexArray(vaoId);
 
         shader.setUniformVector3f("worldPos", chunkData.getWorldX(), chunkData.getWorldY(), chunkData.getWorldZ());
@@ -70,5 +80,11 @@ public class ChunkMesh {
         glDeleteVertexArrays(vaoId);
     }
 
+    public ChunkData getChunkData(){
+        return chunkData;
+    }
+    public Boolean getInitialized(){
+        return initialized;
+    }
 
 }

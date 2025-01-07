@@ -1,21 +1,20 @@
 package com.voxel_engine.utils;
 
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class Constants {
     public static final int CHUNK_SIZE = 16;
     public static final int CHUNK_SIZE_P = CHUNK_SIZE + 2; // Padded size for binary greedy alg
-    public static final int WORLD_HEIGHT = 255;
-    public static final int CHUNK_SIZE_P2 = CHUNK_SIZE_P * CHUNK_SIZE_P;
-    public static final int CHUNK_SIZE_P3 = CHUNK_SIZE_P2 * CHUNK_SIZE_P;
-
-    // Define ADJACENT_AO_DIRS as a static list of 3D vectors, e.g.
-    public static final Vector3f[] ADJACENT_AO_DIRS = {
-            new Vector3f(0, -1, 0), // down
-            new Vector3f(0, 1, 0),  // up
-            new Vector3f(-1, 0, 0), // left
-            new Vector3f(1, 0, 0),  // right
-            new Vector3f(0, 0, -1), // forward
-            new Vector3f(0, 0, 1)   // back
+    // Define offsets for the six neighboring positions in 3D space.
+    public static final Vector3i[] NEIGHBOR_OFFSETS = {
+            new Vector3i(16, 0, 0),  // Right
+            new Vector3i(-16, 0, 0), // Left
+            new Vector3i(0, 16, 0),  // Up
+            new Vector3i(0, -16, 0), // Down
+            new Vector3i(0, 0, 16),  // Forward
+            new Vector3i(0, 0, -16)  // Backward
     };
+
+
 }
